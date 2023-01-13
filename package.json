@@ -4,6 +4,7 @@
   "description": "A CLI tool to save Minecraft world to AWS S3 bucket",
   "main": "index.js",
   "bin": "index.js",
+  "private": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Repugraf/minecraft-saver.git"
