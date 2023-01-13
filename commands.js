@@ -14,8 +14,8 @@ const {
 } = require("./util");
 
 module.exports.printConfig = () => {
-  fs.existsSync("data.json")
-    ? console.log(fs.readFileSync("data.json").toString())
+  fs.existsSync(dataFile)
+    ? console.log(fs.readFileSync(dataFile).toString())
     : console.log("Not configured!");
 };
 
