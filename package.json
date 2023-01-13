@@ -1,0 +1,30 @@
+{
+  "name": "minecraft-saver",
+  "version": "0.0.1",
+  "description": "A CLI tool to save Minecraft world to AWS S3 bucket",
+  "main": "index.js",
+  "bin": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Repugraf/minecraft-saver.git"
+  },
+  "keywords": [
+    "minecraft",
+    "s3",
+    "save",
+    "cloud",
+    "sync"
+  ],
+  "author": "Serhii Mamedov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Repugraf/minecraft-saver/issues"
+  },
+  "homepage": "https://github.com/Repugraf/minecraft-saver#readme",
+  "dependencies": {
+    "aws-sdk": "2.1293.0",
+    "prompts": "2.4.2",
+    "yargs": "17.6.2",
+    "zip-lib": "0.7.3"
+  }
+}
