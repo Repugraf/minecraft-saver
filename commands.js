@@ -167,7 +167,9 @@ module.exports.pull = async () => {
   }
 
   await Promise.all(
-    pulledWorlds.map(world => zl.extract(world.path, resolve(savesPath, world.key)))
+    pulledWorlds.map(world =>
+      zl.extract(world.path, resolve(savesPath, world.key), { overwrite: true })
+    )
   );
 
   console.log("Pulled Worlds:\n", pulledWorlds.map(w => `  - ${w.key}`).join("\n"));
