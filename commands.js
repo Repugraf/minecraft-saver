@@ -95,6 +95,8 @@ module.exports.save = async () => {
     ]
   });
 
+  if (selectedSaveIndex === undefined) return process.exit(0);
+
   if (selectedSaveIndex === 0)
     for (const save of saves)
       savedWorlds.push(await saveOneWorld(save, savesPath, tmpDir, s3, bucket));
@@ -149,6 +151,8 @@ module.exports.pull = async () => {
       ...filteredWorlds.map(w => ({ title: w.Key }))
     ]
   });
+
+  if (selectedWorldIndex === undefined) return process.exit(0);
 
   /** @type {Array<{key: string, path: string}>} */
   const pulledWorlds = [];
