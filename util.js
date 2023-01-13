@@ -45,7 +45,7 @@ module.exports.getDirs = () => ({ tmpDir: os.tmpdir(), savesPath: this.getGameSa
  * @returns {{ accessKeyId: string, secretAccessKey: string, region: string, bucket: string, }}
  *  */
 module.exports.getConfig = () => {
-  if (!fs.existsSync("data.json"))
+  if (!fs.existsSync(this.dataFile))
     throw new Error(
       "The CLI is not configured with AWS credentials. Please run `setup-config` command first"
     );
