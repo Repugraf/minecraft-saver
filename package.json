@@ -1,9 +1,11 @@
 {
   "name": "minecraft-saver",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A CLI tool to save Minecraft world to AWS S3 bucket",
   "main": "index.js",
-  "bin": "index.js",
+  "bin": {
+    "minecraft-saver": "index.js"
+  },
   "private": false,
   "repository": {
     "type": "git",

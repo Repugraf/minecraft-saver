@@ -1,8 +1,11 @@
 #!/usr/bin/env node
+const { resolve } = require("path");
 const yargs = require("yargs/yargs");
 const { hideBin } = require("yargs/helpers");
 const { commandWrapper } = require("./util");
 const { printConfig, setupConfig, save, pull } = require("./commands");
+
+const version = require("package.json").version;
 
 yargs(hideBin(process.argv))
   .command(
@@ -29,7 +32,7 @@ yargs(hideBin(process.argv))
     y => y,
     () => commandWrapper(pull)
   )
-  .version(require("./package.json").version)
+  .version(version)
   .alias("v", "version")
   .help("h")
   .alias("h", "help")
