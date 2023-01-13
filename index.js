@@ -5,7 +5,7 @@ const { hideBin } = require("yargs/helpers");
 const { commandWrapper } = require("./util");
 const { printConfig, setupConfig, save, pull } = require("./commands");
 
-const version = require("package.json").version;
+const version = require(resolve(__dirname, "package.json")).version;
 
 yargs(hideBin(process.argv))
   .command(
