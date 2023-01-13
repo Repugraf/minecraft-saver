@@ -1,6 +1,6 @@
 {
   "name": "minecraft-saver",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A CLI tool to save Minecraft world to AWS S3 bucket",
   "main": "index.js",
   "bin": {

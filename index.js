@@ -38,4 +38,5 @@ yargs(hideBin(process.argv))
   .alias("h", "help")
   .showHelpOnFail(true)
   .demandCommand()
+  .strict()
   .parse();
