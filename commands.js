@@ -3,6 +3,7 @@ const fs = require("fs");
 
 const zl = require("zip-lib");
 const prompts = require("prompts");
+const { filesize } = require("filesize");
 const {
   accessKeyIdRegExp,
   secretAccessKeyRegExp,
@@ -95,6 +96,8 @@ module.exports.save = async () => {
     ]
   });
 
+  console.log("");
+
   if (selectedSaveIndex === undefined) return process.exit(0);
 
   if (selectedSaveIndex === 0)
@@ -105,9 +108,20 @@ module.exports.save = async () => {
       await saveOneWorld(saves[selectedSaveIndex - 1], savesPath, tmpDir, s3, bucket)
     );
 
+  console.log("");
+
   console.log("Saved worlds:\n", savedWorlds.map(w => `  - ${w}`).join("\n"));
 };
 
+/**
+ *
+ * @param {string} save
+ * @param {string} savesPath
+ * @param {string} tmpDir
+ * @param {import('aws-sdk').S3} s3
+ * @param {string} bucket
+ * @returns
+ */
 const saveOneWorld = async (save, savesPath, tmpDir, s3, bucket) => {
   const currentSaved = resolve(savesPath, save);
 
@@ -116,13 +130,20 @@ const saveOneWorld = async (save, savesPath, tmpDir, s3, bucket) => {
 
   await zl.archiveFolder(currentSaved, zippedFilePath);
 
+  process.stdout.write(`Starting to upload ${zippedFileName}`);
+
   await s3
-    .putObject({
+    .upload({
       Bucket: bucket,
       Key: zippedFileName,
       Body: fs.readFileSync(zippedFilePath)
     })
+    .on("httpUploadProgress", ({ loaded, total }) =>
+      writeLine(`${zippedFileName} ${filesize(loaded)}/${filesize(total)}`)
+    )
     .promise();
+
+  writeLine(`Uploaded ${zippedFileName} successfully\n`);
 
   fs.rmSync(zippedFilePath);
 
@@ -154,6 +175,8 @@ module.exports.pull = async () => {
 
   if (selectedWorldIndex === undefined) return process.exit(0);
 
+  console.log("");
+
   /** @type {Array<{key: string, path: string}>} */
   const pulledWorlds = [];
 
@@ -176,18 +199,20 @@ module.exports.pull = async () => {
     )
   );
 
+  console.log("");
+
   console.log("Pulled Worlds:\n", pulledWorlds.map(w => `  - ${w.key}`).join("\n"));
 };
 
 /**
- * @param {import('aws-sdk').S3}
+ * @param {import('aws-sdk').S3} s3
  * @param {import('aws-sdk').S3.Object} obj
  * @param {string} bucket
  * @param {string} tmpDir
  * @returns {Promise<{key: string, path: string}>}
  * */
 const pullOneWorld = (s3, obj, bucket, tmpDir) =>
-  new Promise((res, rej) => {
+  new Promise(async (res, rej) => {
     try {
       const path = resolve(tmpDir, obj.Key);
 
@@ -195,13 +220,31 @@ const pullOneWorld = (s3, obj, bucket, tmpDir) =>
       keyParts.pop();
       const key = keyParts.join(".");
 
+      process.stdout.write(`Starting to download ${obj.Key}`);
       const readStream = s3.getObject({ Bucket: bucket, Key: obj.Key }).createReadStream();
       const writeStream = fs.createWriteStream(path);
 
+      let totalUploaded = 0;
+
       readStream.pipe(writeStream);
-      readStream.on("end", () => res({ key, path }));
+      readStream.on("data", chunk => {
+        writeLine(
+          `${obj.Key} ${filesize((totalUploaded += chunk.byteLength))}/${filesize(obj.Size)}`
+        );
+      });
+      readStream.on("end", () => {
+        writeLine(`Downloaded ${obj.Key} successfully\n`);
+        return res({ key, path });
+      });
       readStream.on("error", rej);
     } catch (error) {
       rej(error);
     }
   });
+
+/** @param {string} message */
+const writeLine = message => {
+  process.stdout.clearLine(0);
+  process.stdout.cursorTo(0);
+  process.stdout.write(message);
+};
